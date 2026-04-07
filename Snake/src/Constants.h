@@ -35,7 +35,7 @@ inline constexpr int INFOSETOFF = 5;
 inline constexpr int DELAY = 200;
 inline const std::string SAVE_FILE_NAME = "GameData.txt";
 
-inline const unordered_map<Direction, Vector2> DIR_MAP = {
+inline const std::unordered_map<Direction, Vector2> DIR_MAP = {
     {UP, {0, -1}},
     {DOWN, {0, 1}},
     {LEFT, {-1, 0}},
