@@ -1,0 +1,10 @@
+D:/VSCodeProjects/Snake/build/CMakeFiles/main.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/package.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/package_source.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/test.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/edit_cache.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/rebuild_cache.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/list_install_components.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/install.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/install/local.dir
+D:/VSCodeProjects/Snake/build/CMakeFiles/install/strip.dir
