@@ -70,4 +70,9 @@ public:
         std::ifstream in(filePath);
         return in && in.peek() != std::ifstream::traits_type::eof();
     }
+
+    static void ClearSaveData(const std::string& filePath = SAVE_FILE_NAME) {
+        std::ofstream out(filePath, std::ios::trunc);
+        out.close();
+    }
 };

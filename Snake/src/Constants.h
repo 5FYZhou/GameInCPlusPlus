@@ -7,7 +7,7 @@
 
 enum Direction { STOP = 0, UP, DOWN, LEFT, RIGHT };
 enum class ShowMode { HALF, FULL };
-enum class CodeType { DEFAULT, WALL, SNAKE, FOOD, SCORE };
+enum class CodeType { DEFAULT, WALL, SNAKE, FOOD, TEXT };
 enum class GameState { GAMEOVER, RUNNING, PAUSED };
 
 struct Vector2 {
@@ -33,7 +33,7 @@ inline constexpr int SCENE_WIDTH = WIDTH + WALL_WIDTH * 2;
 inline constexpr int SCENE_HEIGHT = HEIGHT + WALL_WIDTH * 2;
 inline constexpr int INFOSETOFF = 5;
 inline constexpr int DELAY = 200;
-inline const std::string SAVE_FILE_NAME = "GameData.txt";
+inline const std::string SAVE_FILE_NAME = "data/GameData.txt";
 
 inline const std::unordered_map<Direction, Vector2> DIR_MAP = {
     {UP, {0, -1}},
@@ -61,13 +61,13 @@ inline const std::unordered_map<CodeType, int> colorMap = {
     {CodeType::WALL, 0x0f},
     {CodeType::SNAKE, 0x03},
     {CodeType::FOOD, 0x0d},
-    {CodeType::SCORE, 0x0f}
+    {CodeType::TEXT, 0x0f}
 };
 
 inline const std::vector<std::tuple<std::string, CodeType, int>> INFO = {
-    {"■操作说明：", CodeType::SCORE, 0},
-    {"□开始游戏：WASD", CodeType::SCORE, INFOSETOFF * 0.5},
-    {"□暂停游戏：空格", CodeType::SCORE, INFOSETOFF * 0.5},
-    {"□退出游戏：Esc", CodeType::SCORE, INFOSETOFF * 0.5},
-    {"□显示模式切换：回车", CodeType::SCORE, INFOSETOFF * 0.5}
+    {"■操作说明：", CodeType::TEXT, 0},
+    {"□开始游戏：WASD", CodeType::TEXT, INFOSETOFF * 0.5},
+    {"□暂停游戏：空格", CodeType::TEXT, INFOSETOFF * 0.5},
+    {"□退出游戏：Esc", CodeType::TEXT, INFOSETOFF * 0.5},
+    {"□显示模式切换：回车", CodeType::TEXT, INFOSETOFF * 0.5}
 };
