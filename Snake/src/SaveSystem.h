@@ -5,61 +5,63 @@
 
 class SaveSystem {
 public:
-    static bool Save(const GameData& data,
-                     const std::string& filePath = SAVE_FILE_NAME) {
+    static bool Save(const GameData& data, const std::string& filePath = SAVE_FILE_NAME) {
+        //打开文件
         std::ofstream out(filePath);
         if (!out.is_open()) {
             return false;
         }
-
-        out << static_cast<int>(data.mode) << "\n";
-        out << data.snake.size() << "\n";
-        for (const auto& v : data.snake) {
+        //写入数据
+        out << static_cast<int>(data.mode) << "\n"; //保存显示模式
+        out << data.snakeBody.size() << "\n"; //保存蛇的长度
+        for (const auto& v : data.snakeBody) { //保存蛇的身体坐标
             out << v.x << " " << v.y << "\n";
         }
-        out << data.food.x << " " << data.food.y << "\n";
-        out << static_cast<int>(data.dir) << "\n";
-        out << data.score << "\n";
+        out << data.foodPos.x << " " << data.foodPos.y << "\n"; //保存食物坐标
+        out << static_cast<int>(data.dir) << "\n"; //保存蛇的移动方向
+        out << data.score << "\n"; //保存分数
         return true;
     }
 
-    static bool Load(GameData& data,
-                     const std::string& filePath = SAVE_FILE_NAME) {
+    static bool Load(GameData& data, const std::string& filePath = SAVE_FILE_NAME) {
+        //打开文件
         std::ifstream in(filePath);
         if (!in.is_open()) {
             return false;
         }
-
+        //读取数据
         int modeInt;
         if (!(in >> modeInt)) {
             return false;
         }
-        data.mode = static_cast<ShowMode>(modeInt);
+        data.mode = static_cast<ShowMode>(modeInt); //读取显示模式
 
-        int snakeSize;
+        int snakeSize; //读取蛇的长度
         if (!(in >> snakeSize)) {
             return false;
         }
-        data.snake.clear();
-        for (int i = 0; i < snakeSize; i++) {
+        data.snakeBody.clear();
+        for (int i = 0; i < snakeSize; i++) { //读取蛇的身体坐标
             int x, y;
             if (!(in >> x >> y)) {
                 return false;
             }
-            data.snake.emplace_back(x, y);
+            data.snakeBody.emplace_back(x, y);
         }
 
-        if (!(in >> data.food.x >> data.food.y)) {
+        int foodX, foodY; //读取食物坐标
+        if (!(in >> foodX >> foodY)) {
             return false;
         }
+        data.foodPos = {foodX, foodY};
 
-        int dirInt;
+        int dirInt; //读取蛇的移动方向
         if (!(in >> dirInt)) {
             return false;
         }
         data.dir = static_cast<Direction>(dirInt);
 
-        if (!(in >> data.score)) {
+        if (!(in >> data.score)) { //读取分数
             return false;
         }
 

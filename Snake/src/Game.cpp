@@ -6,192 +6,175 @@
 #include <fstream>
 #include <ctime>
 
-Game::Game()
-    : gameState(GameState::GAMEOVER)
-    , isPausedExit(false)
-    , h(GetStdHandle(STD_OUTPUT_HANDLE))
-    , renderer(h)
-{
-}
 
-void Game::Run() {
+Game::Game()
+    : gameState(GameState::GAMEOVER), isPausedExit(false), 
+    h(GetStdHandle(STD_OUTPUT_HANDLE)), renderer(h){
+        dir = Direction::STOP;
+        mode = ShowMode::FULL;
+        score = 0;
+    }
+
+void Game::Run(){
     renderer.hideCursor();
-    if (SaveSystem::HasSaveData()) {
+    if (SaveSystem::HasSaveData()){
         InitPaused();
-    } else {
+    }
+    else{
         Init();
     }
 
-    renderer.drawScene(scene);
-    while (gameState != GameState::GAMEOVER) {
-        switch (gameState) {
+    Draw();
+    while (gameState != GameState::GAMEOVER){
+        switch (gameState){
         case GameState::RUNNING:
-            renderer.drawScore(gameData.score);
-            renderer.drawScene(scene);
+            Draw();
             Sleep(DELAY);
-            Input();
+            HandleInput();
             Logic();
             break;
         case GameState::PAUSED:
-            renderer.drawPause();
-            renderer.drawScore(gameData.score);
+            DrawPaused();
             Sleep(DELAY);
-            InputPause();
-            LogicPause();
-            break;
-        default:
-            break;
-        } 
-    }
-
-    if (isPausedExit) {
-        SaveSystem::Save(gameData);
-    } else {
-        SaveSystem::ClearSaveData();
-    }
-
-    renderer.gotoXY(0, SCENE_HEIGHT + 1);
-    system("pause");
-}
-
-void Game::SetShowMode(ShowMode mode) {
-    renderer.setCurShowMode(mode);
-    gameData.mode = mode;
-}
-
-void Game::ChangeShowMode() {
-    if (gameData.mode == ShowMode::FULL) {
-        SetShowMode(ShowMode::HALF);
-    } else {
-        SetShowMode(ShowMode::FULL);
-    }
-    system("cls");
-    renderer.drawScene(scene);
-}
-
-void Game::Init() {
-    h = GetStdHandle(STD_OUTPUT_HANDLE);
-    gameState = GameState::RUNNING;
-    SetShowMode(ShowMode::FULL);
-    srand(static_cast<unsigned int>(time(nullptr)));
-
-    ResetScene();
-
-    gameData.snake.clear();
-    gameData.snake.push_back({ WIDTH / 2, HEIGHT / 2 });
-    SetGameScene(gameData.snake[0], CodeType::SNAKE);
-
-    gameData.food = GetFoodPos();
-    SetGameScene(gameData.food, CodeType::FOOD);
-    gameData.score = 0;
-}
-
-void Game::Input() {
-    if (_kbhit()) {
-        switch (_getch()) {
-        case 'w':
-            if (gameData.dir != DOWN) {
-                gameData.dir = UP;
-            }
-            break;
-        case 's':
-            if (gameData.dir != UP) {
-                gameData.dir = DOWN;
-            }
-            break;
-        case 'a':
-            if (gameData.dir != RIGHT) {
-                gameData.dir = LEFT;
-            }
-            break;
-        case 'd':
-            if (gameData.dir != LEFT) {
-                gameData.dir = RIGHT;
-            }
-            break;
-        case 27:
-            gameState = GameState::GAMEOVER;
-            break;
-        case 32:
-            gameState = GameState::PAUSED;
-            break;
-        case 13:
-            ChangeShowMode();
+            HandlePausedInput();
+            LogicPaused();
             break;
         default:
             break;
         }
     }
+
+    if (isPausedExit){
+        SaveSystem::Save(GetGameData());
+    }
+    else{
+        SaveSystem::ClearSaveData();
+    }
+
+    renderer.gotoXY(0, SCENE_HEIGHT + 1, mode);
+    system("pause");
 }
 
-void Game::Logic() {
-    if (gameData.dir == Direction::STOP) {
+void Game::Init(){
+    h = GetStdHandle(STD_OUTPUT_HANDLE);
+    gameState = GameState::RUNNING;
+    mode = ShowMode::FULL;
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    snake.Init({WIDTH / 2, HEIGHT / 2});
+    food.Generate(snake);
+    score = 0;
+    dir = Direction::STOP;
+}
+
+void Game::Logic(){
+    if (dir == Direction::STOP){
         return;
     }
 
-    Vector2 newHead = gameData.snake[0] + DIR_MAP.at(gameData.dir);
-    if (Check(newHead, CodeType::WALL) || Check(newHead, CodeType::SNAKE)) {
+    if(!snake.CanMove(dir)){
         gameState = GameState::GAMEOVER;
         return;
     }
-
-    gameData.snake.insert(gameData.snake.begin(), newHead);
-    if (newHead == gameData.food) {
-        gameData.food = GetFoodPos();
-        SetGameScene(gameData.food, CodeType::FOOD);
-        gameData.score += 1;
-    } 
-    else {
-        Vector2 tail = gameData.snake.back();
-        SetGameScene(tail, CodeType::DEFAULT);
-        gameData.snake.pop_back();
+    
+    Vector2 newHead = snake.GetHead() + DIR_MAP.at(dir);
+    bool eat = (newHead == food.GetPosition());
+    snake.Move(dir, eat);
+    if (eat){
+        food.Generate(snake);
+        score += 1;
     }
-    SetGameScene(newHead, CodeType::SNAKE);
 }
 
-void Game::InitPaused() {
+void Game::HandleInput(){
+    InputCommand cmd = input.ProcessRunningInput();
+    switch (cmd){
+    case Up:
+        if (dir != DOWN){
+            dir = UP;
+        }
+        break;
+    case Down:
+        if (dir != UP){
+            dir = DOWN;
+        }
+        break;
+    case Left:
+        if (dir != RIGHT){
+            dir = LEFT;
+        }
+        break;
+    case Right:
+        if (dir != LEFT){
+            dir = RIGHT;
+        }
+        break;
+    case Exit:
+        gameState = GameState::GAMEOVER;
+        break;
+    case Pause:
+        gameState = GameState::PAUSED;
+        break;
+    case ChangeMode:
+        SwitchShowMode();
+        break;
+    default:
+        break;
+    }
+}
+
+void Game::Draw(){
+    scene.Build(snake, food);
+    renderer.drawScene(scene, mode);
+    renderer.drawScore(score, mode);
+}
+
+void Game::DrawPaused(){
+    renderer.drawScore(score, mode);
+    renderer.drawPause(mode);
+}
+
+void Game::InitPaused(){
     system("cls");
     std::cout << "继续游戏？（Y/n）";
     char a = _getch();
-    if (a == 'Y' || a == 'y') {
-        if (SaveSystem::Load(gameData)) {
-            SetShowMode(gameData.mode);
-            ResetScene();
-            for (const auto& pos : gameData.snake) {
-                SetGameScene(pos, CodeType::SNAKE);
-            }
-            SetGameScene(gameData.food, CodeType::FOOD);
+    if (a == 'Y' || a == 'y'){
+        GameData loadedData;
+        if (SaveSystem::Load(loadedData)){
+            SetGameData(loadedData);
             gameState = GameState::PAUSED;
-        } 
-        else {
+        }
+        else{
             SaveSystem::ClearSaveData();
             Init();
             gameState = GameState::RUNNING;
         }
-    } 
-    else {
+    }
+    else{
         Init();
         gameState = GameState::RUNNING;
     }
 }
 
-void Game::InputPause() {
-    if (_kbhit()) {
-        switch (_getch()) {
-        case 27:
-            isPausedExit = true;
-            gameState = GameState::GAMEOVER;
-            break;
-        case 13:
-            ChangeShowMode();
-            break;
-        default:
-            gameState = GameState::RUNNING;
-            renderer.drawScene(scene);
-            break;
-        }
-    }
+void Game::LogicPaused(){
 }
 
-void Game::LogicPause() {
+void Game::HandlePausedInput(){
+    InputCommand cmd = input.ProcessPausedInput();
+    switch (cmd)
+    {
+    case Exit:
+        isPausedExit = true;
+        gameState = GameState::GAMEOVER;
+        break;
+    case ChangeMode:
+        SwitchShowMode();
+        break;
+    case Pause:
+        break;  // 继续保持暂停状态
+    default:
+        gameState = GameState::RUNNING;
+        Draw();
+        break;
+    }
 }

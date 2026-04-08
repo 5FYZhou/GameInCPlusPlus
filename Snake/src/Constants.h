@@ -20,15 +20,15 @@ struct Vector2 {
 
 struct GameData {
     ShowMode mode = ShowMode::FULL;
-    std::vector<Vector2> snake;
-    Vector2 food;
+    std::vector<Vector2> snakeBody;
+    Vector2 foodPos;
     Direction dir = Direction::STOP;
     int score = 0;
 };
 
 inline constexpr int WIDTH = 20;
 inline constexpr int HEIGHT = 20;
-inline constexpr int WALL_WIDTH = 1;
+inline constexpr int WALL_WIDTH = 2;
 inline constexpr int SCENE_WIDTH = WIDTH + WALL_WIDTH * 2;
 inline constexpr int SCENE_HEIGHT = HEIGHT + WALL_WIDTH * 2;
 inline constexpr int INFOSETOFF = 5;
@@ -66,8 +66,13 @@ inline const std::unordered_map<CodeType, int> colorMap = {
 
 inline const std::vector<std::tuple<std::string, CodeType, int>> INFO = {
     {"■操作说明：", CodeType::TEXT, 0},
-    {"□开始游戏：WASD", CodeType::TEXT, INFOSETOFF * 0.5},
+    {"□开始游戏：WASD", CodeType::SNAKE, INFOSETOFF * 0.5},
     {"□暂停游戏：空格", CodeType::TEXT, INFOSETOFF * 0.5},
+    {"□继续游戏：任意键", CodeType::TEXT, INFOSETOFF * 0.5},
     {"□退出游戏：Esc", CodeType::TEXT, INFOSETOFF * 0.5},
-    {"□显示模式切换：回车", CodeType::TEXT, INFOSETOFF * 0.5}
+    {"□显示模式切换：回车", CodeType::TEXT, INFOSETOFF * 0.5},
+    {"\n", CodeType::TEXT, 0},
+    {"■存档说明：", CodeType::TEXT, 0},
+    {"□暂停后Esc退出游戏，会存档", CodeType::TEXT, INFOSETOFF * 0.5},
+    {"□关闭窗口后再次打开，会尝试读档", CodeType::TEXT, INFOSETOFF * 0.5}
 };

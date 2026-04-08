@@ -8,8 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # 选项：是否构建共享库，共享库设为 ON，静态库设为 OFF
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)
 
-# 定义一个名为main的可执行目标，源文件为src/main.cpp 和 src/Game.cpp 和 src/Renderer.cpp
-add_executable(main src/main.cpp src/Game.cpp src/Renderer.cpp)
+# 定义一个名为main的可执行目标，源文件为src/main.cpp 和 src/Game.cpp 和 src/Renderer.cpp 和 src/Input.cpp 和 src/Snake.cpp 和 src/Food.cpp 和 src/Scene.cpp
+add_executable(main src/main.cpp src/Game.cpp src/Renderer.cpp src/Input.cpp src/Snake.cpp src/Food.cpp src/Scene.cpp)
 # 设置C++标准为C++17
 target_compile_features(main PRIVATE cxx_std_17)
 #在Windows系统中（使用MinGW-w64）构建时
