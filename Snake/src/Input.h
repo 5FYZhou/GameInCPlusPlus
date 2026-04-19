@@ -2,15 +2,19 @@
 
 #include "Constants.h"
 
-enum InputCommand { None, Up, Down, Left, Right, Pause, Exit, ChangeMode };
+enum InputCommand { None, Default, Up, Down, Left, Right, Pause, Exit, ChangeMode, Sprint,
+Confirm, Cancel };
 
 class Input {
 public:
     Input();
+    
+    InputCommand ProcessInput();
+    bool KeyDown(InputCommand cmd);
 
-    // 处理运行时的输入，返回命令
-    InputCommand ProcessRunningInput();
+    InputCommand GInput();
 
-    // 处理暂停时的输入，返回命令
-    InputCommand ProcessPausedInput();
+    bool GetOneKey(InputCommand cmd);
+
+    bool WaitAny();
 };

@@ -2,6 +2,7 @@
 
 #include "Constants.h"
 #include "SaveSystem.h"
+#include "TimeSystem.h"
 #include "Renderer.h"
 #include "Input.h"
 #include "Snake.h"
@@ -18,17 +19,16 @@ public:
     void Run();
 
 private:
-    Snake snake;
-    Food food;
-    Scene scene;
-    Direction dir;
-    ShowMode mode;
-    int score;
+    Snake snake; Food food; Scene scene;
+    Direction dir; ShowMode mode; int score;
     GameState gameState;
     bool isPausedExit;
-    HANDLE h;
+
     Renderer renderer;
     Input input;
+    TimeSystem timeSystem;
+    float intervalTime;
+    float intervalTimer;
 
     void Init();
     void Logic();
@@ -68,4 +68,24 @@ private:
         dir = data.dir;
         score = data.score;    
     }
+
+    bool IsOpposite(Direction dir1, Direction dir2) {
+        return (dir1 == UP && dir2 == DOWN) || (dir1 == DOWN && dir2 == UP) ||
+               (dir1 == LEFT && dir2 == RIGHT) || (dir1 == RIGHT && dir2 == LEFT);
+    }
+
+    Difficulty GetIntervalInScore() const {
+        Difficulty currentDifficulty = difficultyTable[0];
+        for(const auto& diff: difficultyTable){
+            if(score >= diff.scoreThreshold){
+                currentDifficulty = diff;
+            }
+            else{
+                break;
+            }
+        }
+        return currentDifficulty;
+    }
+
+
 };

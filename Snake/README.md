@@ -103,3 +103,7 @@ Snake/
 
 - 当前仓库链接为 `GameInCPlusPlus/Snake`
 - 如果需要，我可以继续补充：作者信息、许可证、GitHub 仓库 URL、截图或示例运行效果。
+
+以上内容由Github Copilot生成
+
+作者：FYZhou

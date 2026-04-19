@@ -13,13 +13,16 @@ void Snake::SetBody(const std::vector<Vector2>& newBody) {
 
 bool Snake::CanMove(Direction dir) const {
     Vector2 newHead = body[0] + DIR_MAP.at(dir);
+    // 判断新位置是否撞墙或撞到自己
     bool isHitWall = (newHead.x < 0 || newHead.x >= WIDTH || newHead.y < 0 || newHead.y >= HEIGHT);
     return !(isHitWall || CheckCollision(newHead));
 }
 
 void Snake::Move(Direction dir, bool grow) {
     Vector2 newHead = body[0] + DIR_MAP.at(dir);
+    // 在头部插入新位置
     body.insert(body.begin(), newHead);
+    // 如果不吃食物且蛇身长度大于1，移除尾部
     if (!grow && !body.empty()) {
         body.pop_back();
     }
