@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include <iomanip>
 
-Renderer::Renderer(ResourceManager& r, int& g): rm(r), curGridSize(g){ }
+Renderer::Renderer(ResourceManager& r): rm(r){ }
 
 void Renderer::Init(){
     sBackground.emplace(rm.getTexture(TextureType::BACKGROUND));
@@ -25,13 +25,11 @@ void Renderer::DrawBackground(RenderWindow& window, int index){
 	window.draw(*sBackground);
 }
 
-void Renderer::DrawGrid(RenderWindow& window, const Scene& grid){
-    //float scale = 2.0f;
-    //sTiles->setScale({scale, scale});
-    //curGridSize = GRIDSIZE*2;
-    // 计算网格的起始位置，使其居中显示
-    gridStartPos.x = (window.getSize().x - grid.GetWidth() * curGridSize) / 2;
-	gridStartPos.y = (window.getSize().y - grid.GetHeight() * curGridSize) / 2;
+void Renderer::DrawGrid(RenderWindow& window, const Scene& grid, 
+		sf::Vector2f gridStartPos, int curGridSize, int skinIndex){
+    float scale = curGridSize / static_cast<float>(GRIDSIZE);
+    sTiles->setScale({scale, scale});
+	sTiles->setTexture(rm.getTexture(TextureType::GRID, skinIndex));
     // 绘制网格
     for (int i = 0; i < grid.GetHeight(); i++) {
         for (int j = 0; j < grid.GetWidth(); j++) {

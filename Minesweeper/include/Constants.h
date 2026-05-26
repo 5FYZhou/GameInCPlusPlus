@@ -48,12 +48,13 @@ enum class ButtonState {
     Pressed
 };
 
+// 与图片一一对应
 enum class ButtonType {
     Easy = 0,
     Normal,
     Hard,
-    BG,
     Skin,
+    BG,
     Restart,
     Quit
 };

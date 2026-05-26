@@ -27,6 +27,7 @@ private:
     int mineNum;
     Scene grid;
     int gridSpriteSize;
+    sf::Vector2f gridStartPos;
 
     Vector2i BtnLeftCorner;
     int BtnDetaX;
@@ -42,7 +43,8 @@ private:
     int curBackground;
     int curSkin;
     float timer;
-    bool timerRunning;
+
+    bool win = false;
 
     void Init();
     void Logic();
@@ -56,12 +58,4 @@ private:
     void HandleMouse(const MouseState& mouse);
     void HandleButtonClick(ButtonType type);
     void UpdateTimer(float dt);
-
-    // ...保留存档相关接口...
-    GameData GetGameData() const {
-        GameData data;
-        return data;
-    }
-    void SetGameData(const GameData& data) {
-    }
 };
